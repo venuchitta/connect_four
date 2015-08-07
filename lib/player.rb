@@ -8,8 +8,8 @@ class Player
     @rows = rows
     @columns = columns
     @num_pieces_to_win = num_pieces_to_win
-    @horizontal = Hash.new{|hash, key| hash[key] = Set.new}  ## Uses this hash to find out if the player is present around
-    @vertical = Hash.new{|hash, key| hash[key] = Set.new}
+    @horizontal = Hash.new{ | hash, key | hash[key] = Set.new }  ## Uses this hash to find out if the player is present around
+    @vertical = Hash.new{ | hash, key | hash[key] = Set.new }
   end
 
   def check_for_win(row, column)
@@ -44,53 +44,41 @@ class Player
     left_count, right_count = 0, 0
 
     (cell).upto(@rows) do |element|
-      if cols_array.include? element
-        left_count += 1
-      else
-        break
+      (cols_array.include? element) ? (left_count += 1) : break
       end
-    end
 
-    (cell-1).downto(0) do |element|
-      if cols_array.include? element
-        right_count += 1
-      else
-        break
+    (cell - 1).downto(0) do |element|
+      (cols_array.include? element) ? (right_count += 1) : break
       end
-    end
 
     @num_pieces_to_win <= left_count + right_count
   end
 
   #### Checks if any pieces are diagonal
   def check_diagonals(row, column)
-    one = check_diagonal((diagonal_cells(row,column))[0][0],(diagonal_cells(row,column))[0][1], 0) +
-        check_diagonal((diagonal_cells(row,column))[1][0],(diagonal_cells(row,column))[1][1], 1) - 1
+
+    one = check_diagonal((diagonal_cells(row, column))[0][0],(diagonal_cells(row, column))[0][1], 0) +
+        check_diagonal((diagonal_cells(row, column))[1][0],(diagonal_cells(row, column))[1][1], 1) - 1
     return true if one >= @num_pieces_to_win
 
-    other = check_diagonal((diagonal_cells(row,column))[2][0],(diagonal_cells(row,column))[2][1], 2) +
-        check_diagonal((diagonal_cells(row,column))[3][0],(diagonal_cells(row,column))[3][1], 3) - 1
+    other = check_diagonal((diagonal_cells(row, column))[2][0],(diagonal_cells(row, column))[2][1], 2) +
+        check_diagonal((diagonal_cells(row, column))[3][0],(diagonal_cells(row, column))[3][1], 3) - 1
     return true if other >= @num_pieces_to_win
 
     false
   end
 
   def check_diagonal(row, column, direction)
-    return 1 if !(check_boundaries(row,column) && check_if_present(row,column))
-    return 1 + check_diagonal((diagonal_cells(row,column))[direction][0], (diagonal_cells(row,column))[direction][1], direction)
+    return 1 if !(check_boundaries(row, column) && check_if_present(row, column))
+    return 1 + check_diagonal((diagonal_cells(row, column))[direction][0], (diagonal_cells(row, column))[direction][1], direction)
   end
 
   def check_boundaries(row, column)
-    return true if row>=0 && row<@rows && column>=0 && column<@columns
-    false
+    (row >= 0 && row < @rows && column >= 0 && column < @columns) ? (return true) : (return false)
   end
 
   def check_if_present(row, column)
-    if @horizontal.include? row
-      return @horizontal[row].include? column
-    else
-      return false
-    end
+    (@horizontal.include? row) ? (return @horizontal[row].include? column) : (return false)
   end
 
   def diagonal_cells(row, column)
